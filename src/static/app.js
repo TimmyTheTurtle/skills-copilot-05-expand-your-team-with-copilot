@@ -304,6 +304,82 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
+  function getSharePageUrl() {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
+
+  function buildShareCopy(name, details) {
+    const shareUrl = getSharePageUrl();
+    const scheduleText = formatSchedule(details);
+
+    return [
+      `Check out ${name} at Mergington High School.`,
+      details.description,
+      `When: ${scheduleText}.`,
+      `Explore it here: ${shareUrl}`,
+    ].join(" ");
+  }
+
+  async function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.setAttribute("readonly", "true");
+    textArea.style.position = "absolute";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    const copied = document.execCommand("copy");
+    document.body.removeChild(textArea);
+    if (!copied) {
+      throw new Error("Clipboard copy failed");
+    }
+  }
+
+  function openShareWindow(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  async function handleShareActivity(name, details, platform) {
+    const shareText = buildShareCopy(name, details);
+    const shareUrl = getSharePageUrl();
+
+    try {
+      if (platform === "copy") {
+        await copyToClipboard(shareText);
+        showMessage("Activity share text copied to your clipboard.", "success");
+        return;
+      }
+
+      if (platform === "email") {
+        const subject = encodeURIComponent(`Join me for ${name}`);
+        const body = encodeURIComponent(shareText);
+        openShareWindow(`mailto:?subject=${subject}&body=${body}`);
+        return;
+      }
+
+      if (platform === "facebook") {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          shareUrl
+        )}`;
+        openShareWindow(url);
+        return;
+      }
+
+      const url = `https://x.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(shareUrl)}`;
+      openShareWindow(url);
+    } catch (error) {
+      console.error("Error sharing activity:", error);
+      showMessage("Sorry, sharing is not available right now.", "error");
+    }
+  }
+
   // Function to determine activity type (this would ideally come from backend)
   function getActivityType(activityName, description) {
     const name = activityName.toLowerCase();
@@ -552,6 +628,21 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="share-section">
+        <span class="share-label">Share this activity:</span>
+        <div class="share-buttons">
+          <button type="button" class="share-button share-button-x">X</button>
+          <button type="button" class="share-button share-button-facebook">
+            Facebook
+          </button>
+          <button type="button" class="share-button share-button-email">
+            Email
+          </button>
+          <button type="button" class="share-button share-button-copy">
+            Copy Text
+          </button>
+        </div>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -586,6 +677,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      const platform = button.classList.contains("share-button-x")
+        ? "x"
+        : button.classList.contains("share-button-facebook")
+        ? "facebook"
+        : button.classList.contains("share-button-email")
+        ? "email"
+        : "copy";
+
+      button.addEventListener("click", () => {
+        handleShareActivity(name, details, platform);
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }

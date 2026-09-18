@@ -190,6 +190,72 @@ section h3 {
   justify-content: center;
 }
 
+.share-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
+}
+
+.share-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.share-button {
+  flex: 1 1 calc(50% - 3px);
+  min-width: 0;
+  padding: 5px 8px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--border-light);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.share-button:hover {
+  background: var(--border-focus);
+  color: var(--text-primary);
+}
+
+.share-button-x {
+  background: #111111;
+  color: #ffffff;
+}
+
+.share-button-facebook {
+  background: #1877f2;
+  color: #ffffff;
+}
+
+.share-button-email {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.share-button-copy {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.share-button-x:hover,
+.share-button-facebook:hover,
+.share-button-email:hover,
+.share-button-copy:hover {
+  filter: brightness(0.95);
+}
+
 /* Activity Tag */
 .activity-tag {
   position: absolute;
@@ -609,6 +675,10 @@ footer {
 
   .sidebar-filters {
     width: 100%;
+  }
+
+  .share-button {
+    flex: 1 1 100%;
   }
 }
 
