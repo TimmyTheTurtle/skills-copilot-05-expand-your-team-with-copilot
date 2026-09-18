@@ -32,6 +32,35 @@
   --info-light: #d1ecf1;
 }
 
+body.dark-mode {
+  --primary: #5b7cff;
+  --primary-light: #7d93ff;
+  --primary-dark: #4056cc;
+  --primary-text: #f8fafc;
+
+  --secondary: #ff8a3d;
+  --secondary-light: #ffb37a;
+  --secondary-dark: #d96a1f;
+  --secondary-text: #111827;
+
+  --background: #0b1020;
+  --surface: #11182d;
+  --text-primary: #e5e7eb;
+  --text-secondary: #b5bfd6;
+  --border: #26314d;
+  --border-light: #1b2340;
+  --border-focus: #3b4a6b;
+
+  --success: #4caf50;
+  --success-light: #10261a;
+  --warning: #f59e0b;
+  --warning-light: #2a2111;
+  --error: #ef4444;
+  --error-light: #2d1518;
+  --info: #38bdf8;
+  --info-light: #102433;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -48,6 +77,12 @@ body {
   padding: 12px;
   background-color: var(--background);
   font-size: 0.9rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  color-scheme: light;
+}
+
+body.dark-mode {
+  color-scheme: dark;
 }
 
 header {
@@ -617,6 +652,9 @@ footer {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #user-status {
@@ -650,6 +688,14 @@ footer {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
+body.dark-mode .icon-button {
+  background-color: rgba(15, 23, 42, 0.45);
+}
+
+body.dark-mode .icon-button:hover {
+  background-color: rgba(15, 23, 42, 0.6);
+}
+
 .user-icon {
   font-size: 1rem;
 }
@@ -663,4 +709,12 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode #logout-button {
+  background-color: rgba(15, 23, 42, 0.45);
+}
+
+body.dark-mode #logout-button:hover {
+  background-color: rgba(15, 23, 42, 0.6);
 }

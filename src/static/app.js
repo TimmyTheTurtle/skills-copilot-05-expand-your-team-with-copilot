@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInfo = document.getElementById("user-info");
   const displayName = document.getElementById("display-name");
   const logoutButton = document.getElementById("logout-button");
+  const themeToggleButton = document.getElementById("theme-toggle");
   const loginModal = document.getElementById("login-modal");
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
@@ -43,6 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentication state
   let currentUser = null;
+  let currentTheme = "light";
+  const themeStorageKey = "theme-preference";
 
   // Time range mappings for the dropdown
   const timeRanges = {
@@ -166,6 +169,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function getPreferredTheme() {
+    const savedTheme = localStorage.getItem(themeStorageKey);
+    if (savedTheme === "light" || savedTheme === "dark") {
+      return savedTheme;
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  function updateThemeUI() {
+    const isDarkMode = currentTheme === "dark";
+
+    document.body.classList.toggle("dark-mode", isDarkMode);
+    document.documentElement.style.colorScheme = currentTheme;
+
+    themeToggleButton.setAttribute("aria-pressed", String(isDarkMode));
+    themeToggleButton.setAttribute(
+      "aria-label",
+      isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+    );
+
+    themeToggleButton.querySelector(".theme-icon").textContent = isDarkMode
+      ? "☀️"
+      : "🌙";
+    themeToggleButton.querySelector(".theme-label").textContent = isDarkMode
+      ? "Light mode"
+      : "Dark mode";
+  }
+
+  function setTheme(theme, persist = false) {
+    currentTheme = theme === "dark" ? "dark" : "light";
+    updateThemeUI();
+
+    if (persist) {
+      localStorage.setItem(themeStorageKey, currentTheme);
+    }
+  }
+
+  function initializeTheme() {
+    setTheme(getPreferredTheme());
+  }
+
   // Login function
   async function login(username, password) {
     try {
@@ -238,6 +285,9 @@ document.addEventListener("DOMContentLoaded", () => {
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
+  themeToggleButton.addEventListener("click", () => {
+    setTheme(currentTheme === "dark" ? "light" : "dark", true);
+  });
 
   // Close login modal when clicking outside
   window.addEventListener("click", (event) => {
@@ -591,6 +641,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners for search and filter
+  initializeTheme();
+
   searchInput.addEventListener("input", (event) => {
     searchQuery = event.target.value;
     displayFilteredActivities();
